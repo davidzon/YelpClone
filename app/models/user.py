@@ -13,6 +13,11 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(40), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
+# If not already present
+    experiences = db.relationship("Experience", back_populates="creator", cascade="all, delete-orphan")
+    reviews = db.relationship("Review", back_populates="user", cascade="all, delete-orphan")
+    images = db.relationship("Image", back_populates="user", cascade="all, delete-orphan")
+
 
     @property
     def password(self):

@@ -24,7 +24,10 @@ def all_experiences():
 @experience_routes.route("/<int:id>")
 def single_experience(id):
     exp = Experience.query.get_or_404(id)
-    return exp.to_dict()
+    return {
+        **exp.to_dict(),
+        "images": [img.to_dict() for img in exp.images]
+    }
 
 @experience_routes.route("/", methods=["POST"])
 @login_required

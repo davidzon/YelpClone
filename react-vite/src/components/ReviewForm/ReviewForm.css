@@ -1,0 +1,31 @@
+.review-form {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+.review-form .stars {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.review-form button {
+  align-self: flex-start;
+  padding: 8px 16px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.review-form button:hover {
+  background-color: #4338ca;
+}

@@ -1,3 +1,110 @@
 .profile-dropdown {
   position: absolute;
 }
+
+/* Wrap entire nav into a 3-part flex container */
+.nav-bar {
+  display: flex;
+  justify-content: space-between; /* space out logo / nav / profile */
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Left logo */
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #512da8;
+  text-decoration: none;
+}
+
+/* Center navigation items */
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* Individual nav item */
+.nav-links li {
+  position: relative;
+}
+
+/* Right profile button container */
+.nav-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Link styles */
+.nav-bar a {
+  text-decoration: none;
+  color: #333;
+}
+
+.nav-bar a.active {
+  font-weight: bold;
+  color: #512da8;
+}
+
+/* 🔍 Search */
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 240px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0;
+  margin-top: 4px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  background-color: white;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-title {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.dropdown-location {
+  display: block;
+  font-size: 0.85em;
+  color: #777;
+}

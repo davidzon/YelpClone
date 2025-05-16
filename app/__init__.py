@@ -5,14 +5,22 @@ from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_login import LoginManager
 from .models import db, User
+
+# ✅ Blueprints
 from .api.user_routes import user_routes
 from .api.auth_routes import auth_routes
+from .api.experience_routes import experience_routes
+from .api.review_routes import review_routes
+from .api.image_routes import image_routes
+
+# ✅ Seed commands
 from .seeds import seed_commands
 from .config import Config
 
+# ✅ Create Flask app
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
-# Setup login manager
+# ✅ Login manager setup
 login = LoginManager(app)
 login.login_view = 'auth.unauthorized'
 
@@ -22,24 +30,24 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-# Tell flask about our seed commands
+# ✅ Seed CLI command
 app.cli.add_command(seed_commands)
 
+# ✅ Load config + initialize extensions
 app.config.from_object(Config)
-app.register_blueprint(user_routes, url_prefix='/api/users')
-app.register_blueprint(auth_routes, url_prefix='/api/auth')
 db.init_app(app)
 Migrate(app, db)
-
-# Application Security
 CORS(app)
 
+# ✅ Register blueprints
+app.register_blueprint(user_routes, url_prefix='/api/users')
+app.register_blueprint(auth_routes, url_prefix='/api/auth')
+app.register_blueprint(experience_routes, url_prefix='/api/experiences')
+app.register_blueprint(review_routes, url_prefix='/api/reviews')
+app.register_blueprint(image_routes, url_prefix='/api/images')
 
-# Since we are deploying with Docker and Flask,
-# we won't be using a buildpack when we deploy to Heroku.
-# Therefore, we need to make sure that in production any
-# request made over http is redirected to https.
-# Well.........
+
+# ✅ Redirect HTTP → HTTPS in production
 @app.before_request
 def https_redirect():
     if os.environ.get('FLASK_ENV') == 'production':
@@ -49,30 +57,34 @@ def https_redirect():
             return redirect(url, code=code)
 
 
+# ✅ Inject CSRF token
 @app.after_request
 def inject_csrf_token(response):
     response.set_cookie(
         'csrf_token',
         generate_csrf(),
         secure=True if os.environ.get('FLASK_ENV') == 'production' else False,
-        samesite='Strict' if os.environ.get(
-            'FLASK_ENV') == 'production' else None,
+        samesite='Strict' if os.environ.get('FLASK_ENV') == 'production' else None,
         httponly=True)
     return response
 
 
+# ✅ API route docs
 @app.route("/api/docs")
 def api_help():
     """
     Returns all API routes and their doc strings
     """
     acceptable_methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
-    route_list = { rule.rule: [[ method for method in rule.methods if method in acceptable_methods ],
-                    app.view_functions[rule.endpoint].__doc__ ]
-                    for rule in app.url_map.iter_rules() if rule.endpoint != 'static' }
+    route_list = {
+        rule.rule: [[method for method in rule.methods if method in acceptable_methods],
+                    app.view_functions[rule.endpoint].__doc__]
+        for rule in app.url_map.iter_rules() if rule.endpoint != 'static'
+    }
     return route_list
 
 
+# ✅ Serve frontend React app
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def react_root(path):
@@ -86,6 +98,7 @@ def react_root(path):
     return app.send_static_file('index.html')
 
 
+# ✅ Catch-all for 404s (React SPA fallback)
 @app.errorhandler(404)
 def not_found(e):
     return app.send_static_file('index.html')
