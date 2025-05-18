@@ -9,16 +9,24 @@ experience_routes = Blueprint("experiences", __name__)
 def all_experiences():
     name = request.args.get("name", "")
     category = request.args.get("category", "")
-    min_price = request.args.get("minPrice", type=float, default=0)
-    max_price = request.args.get("maxPrice", type=float, default=float('inf'))
+    min_price = request.args.get("minPrice", type=float)
+    max_price = request.args.get("maxPrice", type=float)
 
     query = Experience.query
+
     if name:
         query = query.filter(Experience.title.ilike(f"%{name}%"))
+
     if category:
         query = query.filter(Experience.category.ilike(f"%{category}%"))
-    query = query.filter(Experience.price >= min_price, Experience.price <= max_price)
 
+    if min_price is not None and max_price is not None and min_price == max_price:
+     query = query.filter(Experience.price == min_price)
+    else:
+        if min_price is not None:
+            query = query.filter(Experience.price >= min_price)
+        if max_price is not None:
+         query = query.filter(Experience.price <= max_price)
     return {"experiences": [exp.to_dict() for exp in query.all()]}
 
 @experience_routes.route("/<int:id>")
@@ -78,3 +86,14 @@ def delete_experience(id):
     db.session.delete(exp)
     db.session.commit()
     return {"message": "Experience deleted"}
+
+@experience_routes.route('/current')
+@login_required
+def current_user_experiences():
+    """
+    Get all experiences created by the current user.
+    """
+    experiences = Experience.query.filter_by(creator_id=current_user.id).all()
+    return {
+        "experiences": [exp.to_dict() for exp in experiences]
+    }

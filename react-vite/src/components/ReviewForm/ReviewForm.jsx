@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import './ReviewForm.css';
 
 export default function ReviewForm({ experienceId, onSubmit, initialReview = {}, isEditing = false }) {
@@ -27,6 +27,7 @@ export default function ReviewForm({ experienceId, onSubmit, initialReview = {},
     } else {
       const res = await fetch('/api/reviews/', {
         method: 'POST',
+        credentials: "include",
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': getCSRFToken()

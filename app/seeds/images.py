@@ -63,8 +63,8 @@ def seed_images():
     Image(experience_id=17, user_id=1, url="https://images.pexels.com/photos/10078868/pexels-photo-10078868.jpeg?cs=srgb&dl=pexels-zaid-mohammed-86842527-10078868.jpg&fm=jpg", caption="Man singing into a microphone on stage at a karaoke night"),
     Image(experience_id=17, user_id=2, url="https://images.pexels.com/photos/1840320/pexels-photo-1840320.jpeg?cs=srgb&dl=pexels-teemu-r-555088-1840320.jpg&fm=jpg", caption="Microphone on stage ready for a karaoke performance"),
 
-    Image(experience_id=18, user_id=3, url="https://images.pexels.com/photos/175845/pexels-photo-175845.jpeg?cs=srgb&dl=pexels-tom-fisk-175845.jpg&fm=jpg", caption="Two skiers on a snowy mountain slope during a sunny day"),
-    Image(experience_id=18, user_id=1, url="https://images.pexels.com/photos/3462586/pexels-photo-3462586.jpeg?cs=srgb&dl=pexels-daniel-frank-3462586.jpg&fm=jpg", caption="Skiers enjoying a winter day on the slopes"),
+    Image(experience_id=18, user_id=3, url="https://images.pexels.com/photos/1271147/pexels-photo-1271147.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940", caption="Two skiers on a snowy mountain slope during a sunny day"),
+    Image(experience_id=18, user_id=1, url="https://images.pexels.com/photos/869258/pexels-photo-869258.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940", caption="Skiers enjoying a winter day on the slopes"),
     ]
 
 

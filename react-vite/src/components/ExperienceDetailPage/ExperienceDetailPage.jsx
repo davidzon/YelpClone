@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+// src/components/ExperienceDetailPage/ExperienceDetailPage.jsx
+
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import ReviewForm from '../ReviewForm/ReviewForm';
+import ConfirmModal from '../ConfirmModal/ConfirmModal';
 import './ExperienceDetailPage.css';
 
 export default function ExperienceDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const sessionUser = useSelector(state => state.session.user);
   const [selectedImage, setSelectedImage] = useState(null);
   const [experience, setExperience] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [editingReviewId, setEditingReviewId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     fetch(`/api/experiences/${id}`)
@@ -31,6 +37,7 @@ export default function ExperienceDetailPage() {
   const handleReviewUpdate = async (reviewId, updatedReview) => {
     const res = await fetch(`/api/reviews/${reviewId}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': getCSRFToken()
@@ -47,14 +54,33 @@ export default function ExperienceDetailPage() {
     }
   };
 
-  const handleDelete = async (reviewId) => {
+  const handleReviewDelete = async (reviewId) => {
     const res = await fetch(`/api/reviews/${reviewId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: { 'X-CSRFToken': getCSRFToken() },
     });
 
     if (res.ok) {
       setReviews(prev => prev.filter((rev) => rev.id !== reviewId));
+    }
+  };
+
+  const handleExperienceDelete = async () => {
+    const res = await fetch(`/api/experiences/${experience.id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken()
+      }
+    });
+
+    if (res.ok) {
+      toast.success("Experience deleted.");
+      navigate('/');
+    } else {
+      toast.error("Failed to delete experience.");
     }
   };
 
@@ -71,7 +97,6 @@ export default function ExperienceDetailPage() {
     <div className="experience-detail">
       <h1>{experience.title}</h1>
 
-      {/* ✅ Show Experience Images if available */}
       {experience.images && experience.images.length > 0 && (
         <div className="experience-images">
           {experience.images.map(img => (
@@ -80,16 +105,25 @@ export default function ExperienceDetailPage() {
               src={img.url}
               alt={img.caption || experience.title}
               className="experience-image"
-               onClick={() => setSelectedImage(img.url)}
+              onClick={() => setSelectedImage(img.url)}
             />
           ))}
         </div>
       )}
 
       <p>{experience.description}</p>
-      <p><strong>Category:</strong> {experience.category}</p>
-      <p><strong>Price:</strong> ${experience.price}</p>
-      <p><strong>Location:</strong> {experience.location}</p>
+      <div className="detail-container">
+        <p><strong>Category:</strong> {experience.category}</p>
+        <p><strong>Price:</strong> ${experience.price}</p>
+        <p><strong>Location:</strong> {experience.location}</p>
+      </div>
+
+      {sessionUser?.id === experience.creator_id && (
+        <div className="experience-actions">
+          <button onClick={() => navigate(`/experiences/${experience.id}/edit`)}>Edit</button>
+          <button onClick={() => setShowDeleteModal(true)}>Delete</button>
+        </div>
+      )}
 
       <h2>Reviews</h2>
       {reviews.length > 0 ? (
@@ -105,6 +139,7 @@ export default function ExperienceDetailPage() {
                 />
               ) : (
                 <>
+                  <p className="review-username"><strong>{review.user?.username}</strong></p>
                   <div className="star-display">
                     {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
                   </div>
@@ -112,7 +147,7 @@ export default function ExperienceDetailPage() {
                   {sessionUser?.id === review.user_id && (
                     <div className="review-actions">
                       <button onClick={() => setEditingReviewId(review.id)}>Edit</button>
-                      <button onClick={() => handleDelete(review.id)}>Delete</button>
+                      <button onClick={() => handleReviewDelete(review.id)}>Delete</button>
                     </div>
                   )}
                 </>
@@ -131,15 +166,22 @@ export default function ExperienceDetailPage() {
         </>
       )}
 
-        {selectedImage && (
+      {selectedImage && (
         <div className="image-modal" onClick={() => setSelectedImage(null)}>
-            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
             <img src={selectedImage} alt="Enlarged experience" />
             <button onClick={() => setSelectedImage(null)}>Close ✖</button>
-            </div>
+          </div>
         </div>
-        )}
+      )}
 
+      {showDeleteModal && (
+        <ConfirmModal
+          message="Are you sure you want to delete this experience?"
+          onConfirm={handleExperienceDelete}
+          onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
     </div>
   );
 }

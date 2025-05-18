@@ -2,6 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif; /* ✅ Modern font */
 }
 
 .review-card-container {
@@ -11,6 +12,7 @@
   justify-items: center;
   align-items: stretch;
 }
+
 .review-card {
   background-color: white;
   border-radius: 8px;
@@ -21,6 +23,7 @@
   max-width: 350px;
   display: flex;
   flex-direction: column;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif; /* ✅ Font for card text */
 }
 
 .review-card:hover {

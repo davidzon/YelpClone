@@ -36,8 +36,8 @@
 // }
 
 
-import React, { useEffect, useState } from 'react';
-import ReviewCard from '../ReviewCard/ReviewCard'; // ✅ New component for Yelp-style layout
+import  { useEffect, useState } from 'react';
+import ReviewCard from '../ReviewCard/ReviewCard';
 import './HomePage.css';
 
 export default function HomePage() {
@@ -48,7 +48,8 @@ export default function HomePage() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setReviews(data);
+          const shuffled = [...data].sort(() => 0.5 - Math.random());
+          setReviews(shuffled); // ✅ Use the shuffled array
         } else {
           console.error("Unexpected API response:", data);
           setReviews([]);
@@ -62,7 +63,7 @@ export default function HomePage() {
 
   return (
     <div className="homepage">
-      <h1>Latest Reviews on TryThis!</h1>
+      <h1>Try this Businesses!</h1>
       <div className="review-card-container">
         {reviews.map((review) => (
           <ReviewCard key={review.id} review={review} />

@@ -20,6 +20,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif; /* ✅ Consistent font */
 }
 
 .image-modal-content {
@@ -30,6 +31,7 @@
   box-shadow: 0 0 10px black;
   position: relative;
   border-radius: 8px;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif; /* ✅ Font for modal text */
 }
 
 .image-modal-content img {
@@ -47,4 +49,121 @@
   padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif; /* ✅ Font for button */
+  font-size: 14px;
+}
+
+
+
+.experience-detail {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
+  text-align: center;
+}
+
+.experience-detail h1 {
+  font-size: 2rem;
+  color: #512da8;
+  margin-bottom: 1.5rem;
+}
+
+.experience-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.detail-container {
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #333;
+}
+
+.detail-container p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.review-list li {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.star-display {
+  color: #f5a623;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.review-actions {
+  margin-top: 0.5rem;
+}
+
+.review-actions button {
+  margin-right: 0.5rem;
+  padding: 6px 10px;
+  background-color: #512da8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.review-actions button:hover {
+  background-color: #6746c3;
+}
+
+.experience-detail h2 {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.experience-detail h3 {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  color: #444;
+}
+
+.review-username {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 4px;
+}
+.experience-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 1rem;
+  justify-content: center; /* ✅ Center horizontally */
+}
+
+.experience-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #512da8;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.experience-actions button:hover {
+  background-color: #6a42d3;
 }

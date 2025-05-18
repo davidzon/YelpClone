@@ -5,14 +5,17 @@ import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import ProfileButton from "./ProfileButton";
 import "./Navigation.css";
+import OpenModalButton from "../OpenModalButton";
+import LoginFormModal from "../LoginFormModal/LoginFormModal";
 
 function Navigation() {
   const sessionUser = useSelector((state) => state.session.user);
   const [searchTerm, setSearchTerm] = useState("");
-  const [experiences, setExperiences] = useState([]);
   const [filteredExperiences, setFilteredExperiences] = useState([]);
+  const [experiences, setExperiences] = useState([]);
   const navigate = useNavigate();
 
+  // ✅ Load all experiences for local filtering (name/category)
   useEffect(() => {
     const fetchExperiences = async () => {
       const res = await fetch("/api/experiences");
@@ -24,18 +27,30 @@ function Navigation() {
     fetchExperiences();
   }, []);
 
+  // ✅ Filter search term (by price = exact match, otherwise name/category)
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
+
     if (!term) {
       setFilteredExperiences([]);
-    } else {
-      const matches = experiences.filter((exp) => {
-        const title = exp.title?.toLowerCase() || "";
-        const location = exp.location?.toLowerCase() || "";
-        return title.includes(term) || location.includes(term);
-      });
-      setFilteredExperiences(matches.slice(0, 3));
+      return;
     }
+
+    const price = parseFloat(term);
+    if (!isNaN(price)) {
+      fetch(`/api/experiences?minPrice=${price}&maxPrice=${price}`)
+        .then(res => res.json())
+        .then(data => setFilteredExperiences(data.experiences || []));
+      return;
+    }
+
+    const matches = experiences.filter((exp) => {
+      const title = exp.title?.toLowerCase() || "";
+      const category = exp.category?.toLowerCase() || "";
+      return title.includes(term) || category.includes(term);
+    });
+
+    setFilteredExperiences(matches.slice(0, 3));
   }, [searchTerm, experiences]);
 
   const handleSelect = (exp) => {
@@ -45,40 +60,34 @@ function Navigation() {
 
   return (
     <nav className="nav-bar">
-      {/* ✅ Left: Logo */}
-      <NavLink to="/" className="nav-logo">
-        TryThis!
-      </NavLink>
+      <NavLink to="/" className="nav-logo">TryThis!</NavLink>
 
-      {/* ✅ Center: Nav Links */}
-      <ul className="nav-links">
-        <li>
-          <NavLink to="/">Home</NavLink>
-        </li>
-        {sessionUser && (
-          <li>
-            <NavLink to="/create">New Experience</NavLink>
-          </li>
-        )}
-        {!sessionUser && (
-          <>
-            <li>
-              <NavLink to="/login">Log In</NavLink>
-            </li>
-            <li>
-              <NavLink to="/signup">Sign Up</NavLink>
-            </li>
-          </>
-        )}
-      </ul>
+      <div className="nav-center">
+        <ul className="nav-links">
+          <li><NavLink to="/">Home</NavLink></li>
+          <li><NavLink to="/explore">Explore Experiences</NavLink></li>
 
-      {/* ✅ Right: Search + Profile */}
-      <div className="nav-profile">
+          {sessionUser && (
+            <>
+              <li><NavLink to="/create">New Experience</NavLink></li>
+              <li><NavLink to="/my-experiences">My Experiences</NavLink></li>
+            </>
+          )}
+          {!sessionUser && (
+            <>
+              <li>
+                <OpenModalButton buttonText="Log In" modalComponent={<LoginFormModal />} />
+              </li>
+              <li><NavLink to="/signup">Sign Up</NavLink></li>
+            </>
+          )}
+        </ul>
+
         <div className="search-container">
           <input
             type="text"
             className="search-input"
-            placeholder="Search experiences..."
+            placeholder="Search by name, category, or price"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -97,6 +106,9 @@ function Navigation() {
             </ul>
           )}
         </div>
+      </div>
+
+      <div className="nav-profile">
         <ProfileButton />
       </div>
     </nav>

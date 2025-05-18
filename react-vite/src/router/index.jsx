@@ -5,7 +5,9 @@ import HomePage from '../components/HomePage/HomePage';
 import ExperienceDetailPage from '../components/ExperienceDetailPage/ExperienceDetailPage';
 import CreateExperiencePage from '../components/CreateExperiencePage/CreateExperiencePage';
 import Layout from './Layout';
-
+import MyExperiencesPage from '../components/ExperienceDetailPage/MyExperiencesPage';
+import EditExperiencePage from '../components/ExperienceDetailPage/EditExperiencePage';
+import AllExperiencesPage from '../components/AllExperiencesPage/AllExperiencesPage';
 export const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -29,7 +31,21 @@ export const router = createBrowserRouter([
       {
         path: "create",
         element: <CreateExperiencePage />,
+      },
+            {
+        path: "my-experiences", // ✅ New route
+        element: <MyExperiencesPage />,
+      },
+      {
+        path: "experiences/:id/edit",
+        element: <EditExperiencePage />
+      },
+      {
+        path: "explore",
+        element: <AllExperiencesPage />
       }
+
+
     ],
   },
 ]);

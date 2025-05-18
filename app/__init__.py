@@ -20,6 +20,7 @@ from .config import Config
 # ✅ Create Flask app
 app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
+
 # ✅ Login manager setup
 login = LoginManager(app)
 login.login_view = 'auth.unauthorized'
@@ -37,7 +38,7 @@ app.cli.add_command(seed_commands)
 app.config.from_object(Config)
 db.init_app(app)
 Migrate(app, db)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
 # ✅ Register blueprints
 app.register_blueprint(user_routes, url_prefix='/api/users')
@@ -58,16 +59,34 @@ def https_redirect():
 
 
 # ✅ Inject CSRF token
+# @app.after_request
+# def inject_csrf_token(response):
+#     csrf_token = generate_csrf()
+
+#     # Detect if in production
+#     is_prod = os.environ.get('FLASK_ENV') == 'production'
+
+#     response.set_cookie(
+#         'csrf_token',
+#         csrf_token,
+#         secure=is_prod,  # ✅ only secure in production (HTTPS)
+#         samesite='Lax' if not is_prod else 'Strict',  # ✅ use Lax for dev
+#         httponly=False
+#     )
+#     response.headers.set('X-CSRFToken', csrf_token)
+#     return response
 @app.after_request
 def inject_csrf_token(response):
+    csrf_token = generate_csrf()
     response.set_cookie(
         'csrf_token',
-        generate_csrf(),
-        secure=True if os.environ.get('FLASK_ENV') == 'production' else False,
-        samesite='Strict' if os.environ.get('FLASK_ENV') == 'production' else None,
-        httponly=True)
+        csrf_token,
+        secure=os.environ.get("FLASK_ENV") == "production",   # 👈 MATCHED
+        samesite="None" if os.environ.get("FLASK_ENV") == "production" else "Lax",
+        httponly=False
+    )
+    response.headers.set('X-CSRFToken', csrf_token)
     return response
-
 
 # ✅ API route docs
 @app.route("/api/docs")

@@ -12,3 +12,12 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_URL').replace('postgres://', 'postgresql://')
     SQLALCHEMY_ECHO = True
+    # ✅ Session & CSRF cookie config
+    # SESSION_COOKIE_SAMESITE = "None" if os.environ.get("FLASK_ENV") == "production" else "Lax"
+    # SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"
+    if os.environ.get("FLASK_ENV") == "production":
+        SESSION_COOKIE_SAMESITE = "None"
+        SESSION_COOKIE_SECURE = True
+    else:
+        SESSION_COOKIE_SAMESITE = "Lax"
+        SESSION_COOKIE_SECURE = False
