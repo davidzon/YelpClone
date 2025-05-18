@@ -7,6 +7,7 @@ import ProfileButton from "./ProfileButton";
 import "./Navigation.css";
 import OpenModalButton from "../OpenModalButton";
 import LoginFormModal from "../LoginFormModal/LoginFormModal";
+import logo from '../../assets/TryThisLogo.png';
 
 function Navigation() {
   const sessionUser = useSelector((state) => state.session.user);
@@ -15,7 +16,6 @@ function Navigation() {
   const [experiences, setExperiences] = useState([]);
   const navigate = useNavigate();
 
-  // ✅ Load all experiences for local filtering (name/category)
   useEffect(() => {
     const fetchExperiences = async () => {
       const res = await fetch("/api/experiences");
@@ -27,7 +27,6 @@ function Navigation() {
     fetchExperiences();
   }, []);
 
-  // ✅ Filter search term (by price = exact match, otherwise name/category)
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
 
@@ -60,7 +59,9 @@ function Navigation() {
 
   return (
     <nav className="nav-bar">
-      <NavLink to="/" className="nav-logo">TryThis!</NavLink>
+      <NavLink to="/" className="nav-logo">
+        <img src={logo} alt="TryThis logo" className="nav-logo-img" />
+      </NavLink>
 
       <div className="nav-center">
         <ul className="nav-links">
@@ -71,14 +72,6 @@ function Navigation() {
             <>
               <li><NavLink to="/create">New Experience</NavLink></li>
               <li><NavLink to="/my-experiences">My Experiences</NavLink></li>
-            </>
-          )}
-          {!sessionUser && (
-            <>
-              <li>
-                <OpenModalButton buttonText="Log In" modalComponent={<LoginFormModal />} />
-              </li>
-              <li><NavLink to="/signup">Sign Up</NavLink></li>
             </>
           )}
         </ul>
@@ -108,8 +101,16 @@ function Navigation() {
         </div>
       </div>
 
-      <div className="nav-profile">
-        <ProfileButton />
+      <div className="nav-right">
+        {!sessionUser && (
+          <div className="nav-auth">
+            <OpenModalButton buttonText="Log In" modalComponent={<LoginFormModal />} />
+            <NavLink to="/signup">Sign Up</NavLink>
+          </div>
+        )}
+        <div className="nav-profile">
+          <ProfileButton />
+        </div>
       </div>
     </nav>
   );

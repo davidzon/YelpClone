@@ -1,0 +1,66 @@
+.profile-button-wrapper {
+  position: relative;
+}
+
+.profile-icon-button {
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: #512da8; /* Purple icon */
+  padding: 0;
+  font-size: 1.5rem;
+}
+
+/* ✅ No hover effect for profile icon */
+.profile-icon-button:hover {
+  background: none;
+  color: #512da8;
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 140%;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  min-width: 200px;
+}
+
+.profile-dropdown.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.profile-dropdown li {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+/* ✅ Only hover logout button */
+.profile-dropdown li.logout-item button {
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  color: #333;
+  text-align: left;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.profile-dropdown li.logout-item button:hover {
+  background-color: #512da8;
+  color: white;
+}

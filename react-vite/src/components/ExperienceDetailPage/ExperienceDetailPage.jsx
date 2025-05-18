@@ -1,5 +1,3 @@
-// src/components/ExperienceDetailPage/ExperienceDetailPage.jsx
-
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -12,11 +10,14 @@ export default function ExperienceDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const sessionUser = useSelector(state => state.session.user);
-  const [selectedImage, setSelectedImage] = useState(null);
+
+  const [selectedImage, setSelectedImage] = useState(null); // holds image object now
   const [experience, setExperience] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [imageURL, setImageURL] = useState('');
+  const [caption, setCaption] = useState('');
 
   useEffect(() => {
     fetch(`/api/experiences/${id}`)
@@ -29,6 +30,11 @@ export default function ExperienceDetailPage() {
       .then(res => res.json())
       .then(setReviews);
   }, [id]);
+
+  const getCSRFToken = () => {
+    const csrf = document.cookie.split('; ').find(row => row.startsWith('csrf_token='));
+    return csrf ? csrf.split('=')[1] : '';
+  };
 
   const handleReviewSubmit = (newReview) => {
     setReviews(prev => [...prev, newReview]);
@@ -47,9 +53,7 @@ export default function ExperienceDetailPage() {
 
     if (res.ok) {
       const updated = await res.json();
-      setReviews(prev =>
-        prev.map((rev) => (rev.id === reviewId ? updated : rev))
-      );
+      setReviews(prev => prev.map((rev) => (rev.id === reviewId ? updated : rev)));
       setEditingReviewId(null);
     }
   };
@@ -84,9 +88,55 @@ export default function ExperienceDetailPage() {
     }
   };
 
-  const getCSRFToken = () => {
-    const csrf = document.cookie.split('; ').find(row => row.startsWith('csrf_token='));
-    return csrf ? csrf.split('=')[1] : '';
+  const handleImageUpload = async (e) => {
+    e.preventDefault();
+    const csrf = getCSRFToken();
+
+    const res = await fetch("/api/images", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        url: imageURL,
+        caption,
+        experience_id: experience.id
+      })
+    });
+
+    if (res.ok) {
+      const newImg = await res.json();
+      setExperience(prev => ({
+        ...prev,
+        images: [...prev.images, newImg]
+      }));
+      setImageURL('');
+      setCaption('');
+      toast.success("Image added!");
+    }
+  };
+
+  const handleImageDelete = async (imageId) => {
+    const res = await fetch(`/api/images/${imageId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'X-CSRFToken': getCSRFToken()
+      }
+    });
+
+    if (res.ok) {
+      setExperience(prev => ({
+        ...prev,
+        images: prev.images.filter(img => img.id !== imageId)
+      }));
+      toast.success("Image deleted.");
+      setSelectedImage(null); // close modal after delete
+    } else {
+      toast.error("Failed to delete image.");
+    }
   };
 
   if (!experience) return <p>Loading...</p>;
@@ -97,7 +147,7 @@ export default function ExperienceDetailPage() {
     <div className="experience-detail">
       <h1>{experience.title}</h1>
 
-      {experience.images && experience.images.length > 0 && (
+      {experience.images?.length > 0 && (
         <div className="experience-images">
           {experience.images.map(img => (
             <img
@@ -105,13 +155,13 @@ export default function ExperienceDetailPage() {
               src={img.url}
               alt={img.caption || experience.title}
               className="experience-image"
-              onClick={() => setSelectedImage(img.url)}
+              onClick={() => setSelectedImage(img)}
             />
           ))}
         </div>
       )}
 
-      <p>{experience.description}</p>
+      <h2>{experience.description}</h2>
       <div className="detail-container">
         <p><strong>Category:</strong> {experience.category}</p>
         <p><strong>Price:</strong> ${experience.price}</p>
@@ -123,6 +173,26 @@ export default function ExperienceDetailPage() {
           <button onClick={() => navigate(`/experiences/${experience.id}/edit`)}>Edit</button>
           <button onClick={() => setShowDeleteModal(true)}>Delete</button>
         </div>
+      )}
+
+      {sessionUser && (
+        <form onSubmit={handleImageUpload} className="upload-image-form">
+          <h3>Add an Image</h3>
+          <input
+            type="text"
+            placeholder="Image URL"
+            value={imageURL}
+            onChange={(e) => setImageURL(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Caption (optional)"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+          />
+          <button type="submit">Upload</button>
+        </form>
       )}
 
       <h2>Reviews</h2>
@@ -169,7 +239,15 @@ export default function ExperienceDetailPage() {
       {selectedImage && (
         <div className="image-modal" onClick={() => setSelectedImage(null)}>
           <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-            <img src={selectedImage} alt="Enlarged experience" />
+            <img src={selectedImage.url} alt="Enlarged experience" />
+            {(sessionUser?.id === selectedImage.user_id || sessionUser?.id === experience.creator_id) && (
+              <button
+                onClick={() => handleImageDelete(selectedImage.id)}
+                className="delete-image-button"
+              >
+                Delete Image
+              </button>
+            )}
             <button onClick={() => setSelectedImage(null)}>Close ✖</button>
           </div>
         </div>

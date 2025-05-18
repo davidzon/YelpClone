@@ -125,3 +125,41 @@
   align-items: center;
   gap: 2rem;
 }
+.nav-logo-img {
+  height: 50px;
+  object-fit: contain;
+  margin-right: 10px;
+}
+
+/* 🔧 Right section of nav */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* 🔐 Auth buttons */
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-auth a,
+.nav-auth button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  background-color: #512da8;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.nav-auth a:hover,
+.nav-auth button:hover {
+  background-color: #341e7e;
+}
