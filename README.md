@@ -1,10 +1,11 @@
 # TryThis!
 
 ## Live Site
-🌐 [https://trythis.onrender.com](https://trythis.onrender.com) _(example URL—replace with actual if different)_
+🌐 [https://trythis-pq3i.onrender.com/]
 
 ## Backend Repository
-🛠 [_Fullstack Repo: Backend & Frontend_](https://github.com/your-username/trythis)
+🛠 [https://github.com/davidzon/YelpClone]   [_Fullstack Repo: Backend & Frontend_]
+
 
 ## Summary
 TryThis! is a full-stack Yelp-style clone that empowers users to discover and review unique experiences. Users can create businesses, leave reviews, upload images, and explore curated experiences by price, category, and location. With polished modals and dynamic search, TryThis! brings local exploration to life.
